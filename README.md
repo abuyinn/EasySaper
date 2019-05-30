@@ -29,19 +29,19 @@ User never die in first move.
 ### Example 2:
 For this board:
 ```
-   1 2 3 4 5
+    1 2 3 4 5
 
-1  0 0 0 0 0
-2  2 3 3 3 2
-3  ? ? ? ? ?
-4  ? ? ? ? ?
+1   0 0 0 0 0
+2   2 3 3 3 2
+3   ? ? ? ? ?
+4   ? ? ? ? ?
 ```
 
 If there are 6 bombs, the user:
-- can know that there are 5 bombs on 3rd row,
+- can know that there are 5 bombs in 3rd row,
 - have no idea where is the last bomb.
 
-So if user choose cell (row: 3, column: 1) will die, becouse certainly there is a bomb.
+So if user choose cell (row: 3, column: 1) will die, because certainly there is a bomb.
 
 But if user choose cell (row: 4, column: 2) will not die.
 
