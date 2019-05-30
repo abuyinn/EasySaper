@@ -19,15 +19,15 @@ char ** make_tab2x2(int len, char def_val){
 
 void plant_bombs(Board *b){
     int planted=0;
-    int line=0, col=0;
+    int row=0, col=0;
     srand(time(NULL));
 
     while (planted < b->bombs){
         // insert a bomb to free cell in [1 .. size]
-        line = rand() % b->size + 1;
+        row = rand() % b->size + 1;
         col  = rand() % b->size + 1;
-        if (b->b[line][col]==NTHG){
-            b->b[line][col]=BOMB;
+        if (b->b[row][col]==NTHG){
+            b->b[row][col]=BOMB;
             planted++;
         }
     }
@@ -36,25 +36,25 @@ void plant_bombs(Board *b){
 // count the amount of bombs around
 void count_cells(Board *b){
     char **bo=b->b;
-    for (int l=1; l<=b->size; ++l){/* line */
+    for (int r=1; r<=b->size; ++r){     /* row */
         for (int c=1; c<=b->size; ++c){ /* col */
-            if (bo[l][c]!=BOMB){
+            if (bo[r][c]!=BOMB){
                 // empty, so we have to count bombs here
                 // we have guards in edges
                 // ...so we don't care about go over array
-                bo[l][c] = '0' +
-                    (bo[l-1][c-1]==BOMB) +
-                    (bo[l-1][c  ]==BOMB) +
-                    (bo[l-1][c+1]==BOMB) +
+                bo[r][c] = '0' +
+                    (bo[r-1][c-1]==BOMB) +
+                    (bo[r-1][c  ]==BOMB) +
+                    (bo[r-1][c+1]==BOMB) +
 
-                    (bo[l  ][c-1]==BOMB) +
-                    (bo[l  ][c+1]==BOMB) +
+                    (bo[r  ][c-1]==BOMB) +
+                    (bo[r  ][c+1]==BOMB) +
 
-                    (bo[l+1][c-1]==BOMB) +
-                    (bo[l+1][c  ]==BOMB) +
-                    (bo[l+1][c+1]==BOMB);
-                if (bo[l][c]=='0')
-                    bo[l][c]=NTHG;
+                    (bo[r+1][c-1]==BOMB) +
+                    (bo[r+1][c  ]==BOMB) +
+                    (bo[r+1][c+1]==BOMB);
+                if (bo[r][c]=='0')
+                    bo[r][c]=NTHG;
             }
         }
     }
@@ -89,8 +89,8 @@ void del_board(Board *b){
 // CHECKING
 ///////////
 
-int is_in_board(Board *b, int line, int col){
-    return line>0 && col>0 && line<=b->size && col<=b->size;
+int is_in_board(Board *b, int row, int col){
+    return row>0 && col>0 && row<=b->size && col<=b->size;
 }
 
 // returns:
@@ -98,11 +98,11 @@ int is_in_board(Board *b, int line, int col){
 // -1 - cell is outside the board
 // -2 - cell is already discovered
 // -3 - cell is flagged
-// -4 - strange value of mask[line][col]
-int is_move_ok(Board *b, int line, int col){
-    if (! is_in_board(b,line,col))
+// -4 - strange value of mask[row][col]
+int is_move_ok(Board *b, int row, int col){
+    if (! is_in_board(b,row,col))
         return ERR_NOT_IN_BOARD;
-    switch (b->mask[line][col]){
+    switch (b->mask[row][col]){
         case 0:     return  1;
         case 1:     return ERR_ALREADY_DISCOVERED;
         case FLAG:  return ERR_FLAGGED;
@@ -115,11 +115,11 @@ int is_move_ok(Board *b, int line, int col){
 //  2 - cell is ready to be   flagged (is unflagged and undiscovered)
 // -1 - cell is not in the board
 // -2 - cell is already discovered
-// -4 - strange value of mask[line][col]
-int is_flagged(Board *b, int line, int col){
-    if (! is_in_board(b,line,col))
+// -4 - strange value of mask[row][col]
+int is_flagged(Board *b, int row, int col){
+    if (! is_in_board(b,row,col))
         return ERR_NOT_IN_BOARD;
-    switch (b->mask[line][col]){
+    switch (b->mask[row][col]){
         case FLAG:  return  1;
         case 0:     return  2;
         case 1:     return ERR_ALREADY_DISCOVERED;
@@ -132,50 +132,50 @@ int is_flagged(Board *b, int line, int col){
 // DISCOVERING AND FLAGGING
 ///////////////////////////
 
-int discover_cell(Board *b, int line, int col);
+int discover_cell(Board *b, int row, int col);
 
-int discover_empty_area(Board *b, int line, int col){
-    if (b->b[line][col]==NTHG){
+int discover_empty_area(Board *b, int row, int col){
+    if (b->b[row][col]==NTHG){
         // there is no bomb around
-        discover_cell(b,line-1,col-1);
-        discover_cell(b,line-1,col  );
-        discover_cell(b,line-1,col+1);
+        discover_cell(b,row-1,col-1);
+        discover_cell(b,row-1,col  );
+        discover_cell(b,row-1,col+1);
         
-        discover_cell(b,line  ,col-1);
-        discover_cell(b,line  ,col+1);
+        discover_cell(b,row  ,col-1);
+        discover_cell(b,row  ,col+1);
         
-        discover_cell(b,line+1,col-1);
-        discover_cell(b,line+1,col  );
-        discover_cell(b,line+1,col+1);
+        discover_cell(b,row+1,col-1);
+        discover_cell(b,row+1,col  );
+        discover_cell(b,row+1,col+1);
         return 0;
     }
     return -1;
 }
 
-int discover_cell(Board *b, int line, int col){
-    if (is_move_ok(b, line, col)==1){
-        b->mask[line][col]=1;
-        if (b->b[line][col]!=BOMB)
+int discover_cell(Board *b, int row, int col){
+    if (is_move_ok(b, row, col)==1){
+        b->mask[row][col]=1;
+        if (b->b[row][col]!=BOMB)
             b->remaining_moves--;
-        discover_empty_area(b,line,col);
-        return b->b[line][col];
+        discover_empty_area(b,row,col);
+        return b->b[row][col];
     } else
         return -1;
 }
 
-int flag_cell(Board *b, int line, int col){
-    if (! is_in_board(b, line, col))
+int flag_cell(Board *b, int row, int col){
+    if (! is_in_board(b, row, col))
         return -1;
     
-    switch (b->mask[line][col]){
+    switch (b->mask[row][col]){
         case 0:
-            b->mask[line][col]=FLAG;
+            b->mask[row][col]=FLAG;
             b->remaining_bombs--;
             return 0;
         case 1:
             return -2;
         case FLAG:
-            b->mask[line][col]=0;
+            b->mask[row][col]=0;
             b->remaining_bombs++;
             return 0;
         default:
@@ -188,24 +188,24 @@ int flag_cell(Board *b, int line, int col){
 // MOVE
 ///////
 int move(Board *b){
-    int line=0, col=0, flag=0, err=0;
+    int row=0, col=0, flag=0, err=0;
 
     do {
-        if (  (flag = get_move(&line, &col, b->size))  <  0  ){
+        if (  (flag = get_move(&row, &col, b->size))  <  0  ){
             continue;
         }
 
         switch (flag){
             case 0:
-                if ( (err=is_move_ok(b,line,col))==1 ){
+                if ( (err=is_move_ok(b,row,col))==1 ){
                     // Discovering...
-                    return discover_cell(b,line,col);
+                    return discover_cell(b,row,col);
                 }
                 break;
             case FLAG:
-                if ((err=is_flagged(b,line,col))>0){
+                if ((err=is_flagged(b,row,col))>0){
                     // Flagging
-                    return flag_cell(b,line,col);
+                    return flag_cell(b,row,col);
                 }
                 break;
             default:

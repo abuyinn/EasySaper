@@ -13,10 +13,10 @@ void legend(){
 
 void about_moves(){
     printf( "Moves:\n"
-            "\tTo discover cell, type its line, space, and cell,\n"
+            "\tTo discover cell, type its row, space, and cell,\n"
             "\t\tfor example: 1 3\n"
             "\tTo flag/unflag cell, type %c and then"
-                "its line, space and cell,\n"
+                "its row, space and cell,\n"
             "\t\tfor example: %c 1 2\n\n"
             ,FLAG,FLAG);
 }
@@ -53,19 +53,19 @@ void show_board(Board *b){
     printf("\n");
 }
 
-int get_move(int *line, int *col, int size){
+int get_move(int *row, int *col, int size){
     char str[MAXLEN+1]={'\0'};
     char c=0;
 
     while(strlen(str)<2){   // while str=='\n'
-        printf("Your move (line column): ");
+        printf("Your move (row column): ");
         fgets(str,MAXLEN,stdin);
     }
-    if ( (sscanf(str, "%c %d %d",&c,line,col)==3) && isalpha(c) ){
+    if ( (sscanf(str, "%c %d %d",&c,row,col)==3) && isalpha(c) ){
         return c;
     }
-    if (sscanf(str,    "%d %d",   line,col) == 2){
-        //printf("line:%d col:%d\n",*line,*col);
+    if (sscanf(str,    "%d %d",   row,col) == 2){
+        //printf("row:%d col:%d\n",*row,*col);
         return 0;
     }
     return -1;
@@ -88,7 +88,7 @@ void show_errors(int err){
                     "\n\n");
             return;
         case ERR_STRANGE_MASK:
-            printf("Error: strange mask (implementation error)!.\n\n");
+            printf("Error: strange mask (implementation error)!\n\n");
             return;
         case ERR_BAD_OPTION:
             printf("Error: bad option!\n\n");
