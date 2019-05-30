@@ -15,7 +15,8 @@ void about_moves(){
     printf( "Moves:\n"
             "\tTo discover cell, type its line, space, and cell,\n"
             "\t\tfor example: 1 3\n"
-            "\tTo flag/unflag cell, type %c and then its line, space and cell,\n"
+            "\tTo flag/unflag cell, type %c and then"
+                "its line, space and cell,\n"
             "\t\tfor example: %c 1 2\n\n"
             ,FLAG,FLAG);
 }
@@ -53,15 +54,20 @@ void show_board(Board *b){
 }
 
 int get_move(int *line, int *col, int size){
-    char str[MAXLEN+1];
+    char str[MAXLEN+1]={'\0'};
     char c=0;
 
-    printf("Your move (line column): ");
-    fgets(str,MAXLEN,stdin);
-    if (sscanf(str, "%c %d %d",&c,line,col) && isalpha(c))
+    while(strlen(str)<2){   // while str=='\n'
+        printf("Your move (line column): ");
+        fgets(str,MAXLEN,stdin);
+    }
+    if ( (sscanf(str, "%c %d %d",&c,line,col)==3) && isalpha(c) ){
         return c;
-    if (sscanf(str,    "%d %d",   line,col))
+    }
+    if (sscanf(str,    "%d %d",   line,col) == 2){
+        //printf("line:%d col:%d\n",*line,*col);
         return 0;
+    }
     return -1;
 }
 
@@ -69,21 +75,26 @@ void show_errors(int err){
     switch (err){
         case 0:
         case 1:
+        case 2:
             return;
-        case -1:
+        case ERR_NOT_IN_BOARD:
             printf("Error: cell is outside the board!\n\n");
             return;
-        case -2:
+        case ERR_ALREADY_DISCOVERED:
             printf("Error: cell is already discovered!\n\n");
             return;
-        case -3:
-            printf("Error: cell is flagged so you can't discover it now!.\n\n");
+        case ERR_FLAGGED:
+            printf("Error: cell is flagged so you can't discover it now!"
+                    "\n\n");
             return;
-        case -5:
-            printf("Error: cell is already discovered so flag it have no sense!\n\n");
+        case ERR_STRANGE_MASK:
+            printf("Error: strange mask (implementation error)!.\n\n");
+            return;
+        case ERR_BAD_OPTION:
+            printf("Error: bad option!\n\n");
             return;
         default:
-            printf("Error: unhandled error %d!",err);
+            printf("Error: unhandled error %d!\n\n",err);
             return;
     }
 }
@@ -94,4 +105,8 @@ void show_game_over(){
 
 void show_winner(){
     printf("Congratulations! You win!\n\n");
+}
+
+void pmsg(int i){
+    printf("\nmsg: %d\n",i);
 }
