@@ -7,6 +7,7 @@ Saper
 ## Progress
 - [x] Basic version of saper.
 - [ ] Adding easiness.
+- [ ] Tests.
 
 
 ## The idea
