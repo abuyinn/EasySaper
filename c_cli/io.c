@@ -1,7 +1,7 @@
 #include "defs.h"
 #include "io.h"
 
-#define MAXLEN 100  /* maximum input */
+#define MAXLEN 100  /* maximum input length */
 
 void legend(){
     printf( "A legend:\n"
@@ -28,7 +28,6 @@ void welcome(){
     about_moves();
 }
 
-
 void show_board(Board *b){
     // first line
     printf("\n    ");
@@ -38,11 +37,11 @@ void show_board(Board *b){
     // next lines
     int size1=1;
     for (char **p=b->b+1, **m=b->mask+1;
-            size1<=b->size;  ++p,++m,++size1){
+            size1<=b->size;
+                ++p,++m,++size1){
         printf("%3d   ", size1);
-        int size2=b->size;
         for (char *pp=(*p)+1, *mm=(*m)+1;
-                size2--; ++pp,++mm){
+                *pp != EDGE; ++pp,++mm){
             printf("  %c  ", (*mm==1) ? *pp :
                     ((*mm==FLAG)?FLAG:UNKN)  );
         }
@@ -65,7 +64,6 @@ int get_move(int *row, int *col, int size){
         return c;
     }
     if (sscanf(str,    "%d %d",   row,col) == 2){
-        //printf("row:%d col:%d\n",*row,*col);
         return 0;
     }
     return -1;
@@ -99,14 +97,44 @@ void show_errors(int err){
     }
 }
 
-void show_game_over(){
-    printf("You're dead.\n\n");
+void show_result(int remaining_moves){
+    if (remaining_moves==0){
+        // WIN
+        printf("Congratulations! You win!\n\n");
+    } else {
+        // LOSS
+        printf("You're dead.\n\n");
+    }
 }
 
-void show_winner(){
-    printf("Congratulations! You win!\n\n");
+// only for debugging
+void show_b(char **b, int size){
+    printf(">>>>>>show_b>>>>>>>>");
+    // first line
+    printf("\n    ");
+    for (int i=1; i<=size; ++i)
+        printf("%5d%s",i,(i==size)?"\n\n":"");
+
+    // next lines
+    int size1=1;
+    for (char **p=b+1;  size1<=size;  ++p,++size1){
+        printf("%3d   ", size1);
+        for (char *pp=(*p)+1;  *pp!=EDGE; ++pp){
+            printf("  %c  ", *pp  );
+        }
+        printf("\n");
+    }
+    printf("<<<<<<show_b<<<<<<<<\n");
 }
 
-void pmsg(int i){
-    printf("\nmsg: %d\n",i);
+
+void show_all_b(char **b, int size){
+    printf(">>>>>>show_all_b>>>> size: %d\n",size);
+    for (int r=0; r<size; ++r){
+        for (int c=0; c<size; ++c){
+            printf("%c ",b[r][c]);
+        }
+        printf("\n");
+    }
+    printf("<<<<<<show_b<<<<<<<<\n");
 }

@@ -16,10 +16,7 @@ int main(void){
 
     // result
     show_board(b);
-    if (b->remaining_moves==0)
-        show_winner();
-    else
-        show_game_over();
+    show_result(b->remaining_moves);
 
     // clear
     del_board(b);

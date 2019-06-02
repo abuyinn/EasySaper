@@ -2,11 +2,11 @@ CC=gcc
 CFLAGS=-std=c99 -Wall
 
 ODIR=obj
-HEADERS=defs.h core.h io.h
+HEADERS=defs.h core.h io.h solver.h rearrange.h
 
 
-saper: $(ODIR)/main.o $(ODIR)/io.o $(ODIR)/core.o $(HEADERS)
-	$(CC) $(CFLAGS) -o saper $(ODIR)/main.o $(ODIR)/core.o $(ODIR)/io.o
+saper: $(ODIR)/main.o $(ODIR)/io.o $(ODIR)/core.o $(ODIR)/solver.o $(ODIR)/rearrange.o $(HEADERS)
+	$(CC) $(CFLAGS) -o saper $(ODIR)/main.o $(ODIR)/core.o $(ODIR)/io.o $(ODIR)/solver.o $(ODIR)/rearrange.o
 
 $(ODIR)/%.o: %.c $(HEADERS) | $(ODIR)
 	$(CC) $(CFLAGS) -c -o $@ $<
